@@ -45,7 +45,8 @@ int main(){
   tty.c_cc[VMIN] = 1;
 
   cfsetispeed(&tty, B115200);
-
+  cfsetospeed(&tty, B115200);    // need both ftns to work
+    
   if(tcsetattr(serial_port, TCSANOW, &tty)!=0){
     printf("Error %i \n", errno, strerror(errno));
   }
