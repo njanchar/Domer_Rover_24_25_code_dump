@@ -1,26 +1,26 @@
-float32 LstickX
-float32 LstickY
-float32 RstickX
-float32 RstickY
+float32 lstick_x
+float32 lstick_y
+float32 rstick_x
+float32 rstick_y
 
-bool Lstick
-bool Rstick
+bool lstick
+bool rstick
 
-bool dpadL
-bool dpadR
-bool dpadU
-bool dpadD
+bool dpad_l
+bool dpad_r
+bool dpad_u
+bool dpad_d
 
-bool rpadL
-bool rpadR
-bool rpadU
-bool rpadD
+bool rpad_l
+bool rpad_r
+bool rpad_u
+bool rpad_d
 
 bool r1
 bool r2
 
-float32 Ltrigger
-float32 Rtrigger
+float32 ltrigger
+float32 rtrigger
 
 bool share
 bool options
