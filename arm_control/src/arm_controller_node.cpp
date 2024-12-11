@@ -77,7 +77,7 @@ public:
 private:
     uint8_t write_buf[21]; // Write buffer
     rclcpp::Subscription<custom_msgs::msg::PsController>::SharedPtr subscriber_;
-    float positions[5] = {0.0,0.0,0.0,0.0,0.0}; // positions in meters for the sake of converting and copying to the buffer
+    float positions[5] = {0.0,0.0,90.0,90.0,0.0}; // positions in meters for the sake of converting and copying to the buffer
     float dt = 0.05; // could be implemented for increasing commands
     int serial_port;
 
@@ -85,15 +85,30 @@ private:
     {
         for(int i=0;i<sizeof(write_buf);i++){write_buf[i] = '\0';} // set write buffer to zero
         write_buf[0] = 'w'; // indicator char
-        if(msg->dpad_u){positions[0] += 0.001;} // slightly increment each position value because the callback should be firing often
-        if(msg->dpad_d){positions[0] -= 0.001;}
+        if(msg->dpad_u){positions[0] += 0.01;} // slightly increment each position value because the callback should be firing often
+        if(msg->dpad_d){positions[0] -= 0.01;}
         if(msg->rpad_u){positions[1] -= 0.01;}
         if(msg->rpad_d){positions[1] -= 0.01;}
+
+	if(msg->lstick_y>0){positions[2] += 0.1;}
+	if(msg->lstick_y<0){positions[2] -= 0.1;}
+	if(msg->rstick_y>0){positions[3] += 0.01;}
+	if(msg->rstick_y<0){positions[3] -= 0.01;}
+	    
+	// Make sure no unwanted negative values
+	if(positions[0] < 0){positions[0] = 0.0;}
+	if(positions[2] < 0){positions[2] = 0.0;}
+	if(positions[2] > 180){positions[2] = 180.0;}
+	if(positions[3] < 0){positions[3] = 0.0;}
+	if(positions[3] > 180){positions[3] = 180.0;}
+	    
         float s_write = 0.296926 + positions[0]; // temporary variable to add in the unextended length into the command
 
         memcpy(&(write_buf[1]), &s_write, sizeof(float)); // copy shoulder position, size of float
         memcpy(&(write_buf[5]), &(positions[1]), sizeof(float)); // copy elbow position
-
+	memcpy(&(write_buf[9]), &(positions[2]), sizeof(float));
+	memcpy(&(write_buf[13]), &(positions[3]), sizeof(float));
+	    
         write(serial_port, write_buf, sizeof(write_buf)); // write buffer
     }
 };
